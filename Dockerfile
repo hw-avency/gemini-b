@@ -1,0 +1,23 @@
+# Build stage
+FROM node:20-alpine AS builder
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm ci
+
+COPY . .
+RUN npm run build
+
+# Runtime stage
+FROM node:20-alpine
+WORKDIR /app
+ENV NODE_ENV=production
+
+COPY package*.json ./
+RUN npm ci --omit=dev && npm cache clean --force
+
+COPY cloud-run-server.mjs ./
+COPY --from=builder /app/dist ./dist
+
+EXPOSE 8080
+CMD ["node", "cloud-run-server.mjs"]

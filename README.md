@@ -4,17 +4,50 @@
 
 # Run and deploy your AI Studio app
 
-This contains everything you need to run your app locally.
+This repository contains a Vite + React app and is preconfigured for deployment on **Google Cloud Run**.
 
-View your app in AI Studio: https://ai.studio/apps/d1821e2f-108c-4ac3-bea8-9253e4a5fbfa
+## Run locally
 
-## Run Locally
-
-**Prerequisites:**  Node.js
-
+**Prerequisites:** Node.js 20+
 
 1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+   ```bash
+   npm install
+   ```
+2. Start the development server:
+   ```bash
+   npm run dev
+   ```
+
+## Build locally
+
+```bash
+npm run build
+npm run start
+```
+
+The production server listens on `PORT` (default `8080`) and serves the built `dist/` output.
+
+## Deploy to Google Cloud Run
+
+### Option A: Directly from source (recommended)
+
+```bash
+gcloud run deploy gemini-b \
+  --source . \
+  --region europe-west1 \
+  --allow-unauthenticated
+```
+
+Cloud Run will build the included `Dockerfile` and run the container on port `8080`.
+
+### Option B: Build and deploy container image manually
+
+```bash
+gcloud builds submit --tag gcr.io/PROJECT_ID/gemini-b
+
+gcloud run deploy gemini-b \
+  --image gcr.io/PROJECT_ID/gemini-b \
+  --region europe-west1 \
+  --allow-unauthenticated
+```
