@@ -4,6 +4,7 @@ import { Floorplan } from './components/Floorplan';
 import { BookingModal } from './components/BookingModal';
 import { MyBookings } from './components/MyBookings';
 import { AttendanceList } from './components/AttendanceList';
+import { DatePicker } from './components/DatePicker';
 import { Resource, Booking } from './types';
 import { Calendar, Map, List, Settings, Upload, User as UserIcon, Users, ChevronLeft, ChevronRight } from 'lucide-react';
 import { format, addDays, subDays, parseISO } from 'date-fns';
@@ -18,18 +19,6 @@ const MainApp = () => {
   // Modal State
   const [selectedResource, setSelectedResource] = useState<Resource | null>(null);
   const [editingBooking, setEditingBooking] = useState<Booking | undefined>(undefined);
-
-  const handlePrevDay = () => {
-    const prevDate = subDays(parseISO(selectedDate), 1);
-    setSelectedDate(format(prevDate, 'yyyy-MM-dd'));
-    if (view === 'list') setShowAllDates(false);
-  };
-
-  const handleNextDay = () => {
-    const nextDate = addDays(parseISO(selectedDate), 1);
-    setSelectedDate(format(nextDate, 'yyyy-MM-dd'));
-    if (view === 'list') setShowAllDates(false);
-  };
 
   const handleResourceClick = (resource: Resource) => {
     const userBooking = bookings.find(b => b.resourceId === resource.id && b.date === selectedDate && b.userId === currentUser.id);
@@ -163,37 +152,13 @@ const MainApp = () => {
         <div className="space-y-6">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
             <div className="flex items-center gap-2">
-              <button 
-                onClick={handlePrevDay}
-                className="p-2 text-gray-500 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                <ChevronLeft size={20} />
-              </button>
-              
-              <div className="relative flex items-center gap-2 px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl">
-                <Calendar className="text-gray-500" size={18} />
-                <span className="text-sm font-medium text-gray-800">
-                  {format(parseISO(selectedDate), 'EEEE, MMM d, yyyy')}
-                </span>
-                <input
-                  type="date"
-                  value={selectedDate}
-                  onChange={(e) => {
-                    setSelectedDate(e.target.value);
-                    if (view === 'list' && e.target.value) {
-                      setShowAllDates(false);
-                    }
-                  }}
-                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                />
-              </div>
-
-              <button 
-                onClick={handleNextDay}
-                className="p-2 text-gray-500 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                <ChevronRight size={20} />
-              </button>
+              <DatePicker 
+                selectedDate={selectedDate} 
+                onChange={(date) => {
+                  setSelectedDate(date);
+                  if (view === 'list') setShowAllDates(false);
+                }} 
+              />
 
               {view === 'list' && (
                 <button
