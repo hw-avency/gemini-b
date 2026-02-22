@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAppContext } from '../AppContext';
 import { ResourceMarker } from './ResourceMarker';
+import { ResourceConfigModal } from './ResourceConfigModal';
 import { Resource } from '../types';
 import { format } from 'date-fns';
 
@@ -10,7 +11,7 @@ type FloorplanProps = {
 };
 
 export const Floorplan: React.FC<FloorplanProps> = ({ selectedDate, onResourceClick }) => {
-  const { resources, isAdmin, addResource, floors, selectedFloorId, isGridEnabled } = useAppContext();
+  const { resources, isAdmin, addResource, floors, selectedFloorId, isGridEnabled, gridSize } = useAppContext();
   const [newResourcePos, setNewResourcePos] = useState<{ x: number, y: number } | null>(null);
 
   const currentFloor = floors.find(f => f.id === selectedFloorId);
@@ -27,30 +28,14 @@ export const Floorplan: React.FC<FloorplanProps> = ({ selectedDate, onResourceCl
     let y = rawY;
 
     if (isGridEnabled) {
-      // Snap to a 5-unit grid based on an 800x450 coordinate system
-      const snapX = (5 / 800) * 100;
-      const snapY = (5 / 450) * 100;
+      // Snap to a grid based on an 800x450 coordinate system
+      const snapX = (gridSize / 800) * 100;
+      const snapY = (gridSize / 450) * 100;
       x = Math.round(rawX / snapX) * snapX;
       y = Math.round(rawY / snapY) * snapY;
     }
 
     setNewResourcePos({ x, y });
-  };
-
-  const handleAddResource = (type: 'desk' | 'room') => {
-    if (!newResourcePos) return;
-    
-    const newResource: Resource = {
-      id: `r${Date.now()}`,
-      name: `New ${type === 'desk' ? 'Desk' : 'Room'}`,
-      type,
-      x: newResourcePos.x,
-      y: newResourcePos.y,
-      floorId: selectedFloorId,
-    };
-    
-    addResource(newResource);
-    setNewResourcePos(null);
   };
 
   return (
@@ -77,11 +62,11 @@ export const Floorplan: React.FC<FloorplanProps> = ({ selectedDate, onResourceCl
           {/* Grid Overlay */}
           {isAdmin && isGridEnabled && (
             <g stroke="#e5e7eb" strokeWidth="0.5" opacity="0.5">
-              {Array.from({ length: 800 / 5 + 1 }).map((_, i) => (
-                <line key={`v-${i}`} x1={i * 5} y1="0" x2={i * 5} y2="450" />
+              {Array.from({ length: Math.ceil(800 / gridSize) + 1 }).map((_, i) => (
+                <line key={`v-${i}`} x1={i * gridSize} y1="0" x2={i * gridSize} y2="450" />
               ))}
-              {Array.from({ length: 450 / 5 + 1 }).map((_, i) => (
-                <line key={`h-${i}`} x1="0" y1={i * 5} x2="800" y2={i * 5} />
+              {Array.from({ length: Math.ceil(450 / gridSize) + 1 }).map((_, i) => (
+                <line key={`h-${i}`} x1="0" y1={i * gridSize} x2="800" y2={i * gridSize} />
               ))}
             </g>
           )}
@@ -127,32 +112,10 @@ export const Floorplan: React.FC<FloorplanProps> = ({ selectedDate, onResourceCl
 
       {/* Admin Add Resource Context Menu */}
       {isAdmin && newResourcePos && (
-        <div
-          className="absolute bg-white rounded-lg shadow-xl border border-gray-200 p-2 z-50 transform -translate-x-1/2 -translate-y-full mt-[-10px]"
-          style={{ left: `${newResourcePos.x}%`, top: `${newResourcePos.y}%` }}
-        >
-          <div className="text-xs font-semibold text-gray-500 mb-2 px-2">Add Resource</div>
-          <div className="flex flex-col gap-1">
-            <button
-              className="px-4 py-2 text-sm text-left hover:bg-gray-100 rounded transition-colors"
-              onClick={() => handleAddResource('desk')}
-            >
-              Add Desk
-            </button>
-            <button
-              className="px-4 py-2 text-sm text-left hover:bg-gray-100 rounded transition-colors"
-              onClick={() => handleAddResource('room')}
-            >
-              Add Room
-            </button>
-            <button
-              className="px-4 py-2 text-sm text-left text-red-500 hover:bg-red-50 rounded transition-colors mt-1"
-              onClick={() => setNewResourcePos(null)}
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
+        <ResourceConfigModal
+          initialPos={newResourcePos}
+          onClose={() => setNewResourcePos(null)}
+        />
       )}
     </div>
   );

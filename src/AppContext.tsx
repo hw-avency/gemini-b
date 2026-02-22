@@ -14,6 +14,10 @@ type AppContextType = {
   setIsAdmin: (val: boolean) => void;
   isGridEnabled: boolean;
   setIsGridEnabled: (val: boolean) => void;
+  gridSize: number;
+  setGridSize: (val: number) => void;
+  defaultResourceSettings: Record<string, Partial<Resource>>;
+  setDefaultResourceSettings: (settings: Record<string, Partial<Resource>>) => void;
   addResource: (resource: Resource) => void;
   updateResource: (resource: Resource) => void;
   deleteResource: (id: string) => void;
@@ -28,6 +32,8 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [isGridEnabled, setIsGridEnabled] = useState(false);
+  const [gridSize, setGridSize] = useState(5);
+  const [defaultResourceSettings, setDefaultResourceSettings] = useState<Record<string, Partial<Resource>>>({});
   const [resources, setResources] = useState<Resource[]>(INITIAL_RESOURCES);
   const [bookings, setBookings] = useState<Booking[]>(INITIAL_BOOKINGS);
   const [floors, setFloors] = useState<Floor[]>(INITIAL_FLOORS);
@@ -59,6 +65,10 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       setIsAdmin,
       isGridEnabled,
       setIsGridEnabled,
+      gridSize,
+      setGridSize,
+      defaultResourceSettings,
+      setDefaultResourceSettings,
       addResource,
       updateResource,
       deleteResource,

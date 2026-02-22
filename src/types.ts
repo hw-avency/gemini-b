@@ -10,7 +10,9 @@ export type Floor = {
   floorplanUrl: string | null;
 };
 
-export type ResourceType = 'desk' | 'room';
+export type ResourceType = 'desk' | 'room' | 'parking';
+
+export type DurationType = 'precise' | 'full_half_day';
 
 export type Resource = {
   id: string;
@@ -19,6 +21,10 @@ export type Resource = {
   x: number; // percentage 0-100
   y: number; // percentage 0-100
   floorId: string;
+  durationType?: DurationType;
+  bookableFrom?: string; // HH:mm
+  bookableTo?: string; // HH:mm
+  interval?: number; // minutes
 };
 
 export type Booking = {

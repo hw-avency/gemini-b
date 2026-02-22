@@ -10,7 +10,7 @@ import { Calendar, Map, List, Settings, Upload, User as UserIcon, Users, Chevron
 import { format, addDays, subDays, parseISO } from 'date-fns';
 
 const MainApp = () => {
-  const { currentUser, isAdmin, setIsAdmin, bookings, floors, selectedFloorId, setSelectedFloorId, updateFloor, isGridEnabled, setIsGridEnabled } = useAppContext();
+  const { currentUser, isAdmin, setIsAdmin, bookings, floors, selectedFloorId, setSelectedFloorId, updateFloor, isGridEnabled, setIsGridEnabled, gridSize, setGridSize } = useAppContext();
   const [view, setView] = useState<'map' | 'list' | 'attendance'>('map');
   const [selectedDate, setSelectedDate] = useState(format(new Date(), 'yyyy-MM-dd'));
   const [showAllDates, setShowAllDates] = useState(false);
@@ -191,19 +191,37 @@ const MainApp = () => {
 
             {isAdmin && view === 'map' && (
               <div className="flex items-center gap-3">
-                <label className="flex items-center gap-2 cursor-pointer mr-2">
-                  <div className="relative flex items-center">
-                    <input
-                      type="checkbox"
-                      className="sr-only"
-                      checked={isGridEnabled}
-                      onChange={(e) => setIsGridEnabled(e.target.checked)}
-                    />
-                    <div className={`block w-8 h-5 rounded-full transition-colors ${isGridEnabled ? 'bg-blue-600' : 'bg-gray-300'}`}></div>
-                    <div className={`absolute left-1 top-1 bg-white w-3 h-3 rounded-full transition-transform ${isGridEnabled ? 'transform translate-x-3' : ''}`}></div>
-                  </div>
-                  <span className="text-sm font-medium text-gray-700 hidden sm:block">Attach to grid</span>
-                </label>
+                <div className="flex items-center gap-4 mr-2">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <div className="relative flex items-center">
+                      <input
+                        type="checkbox"
+                        className="sr-only"
+                        checked={isGridEnabled}
+                        onChange={(e) => setIsGridEnabled(e.target.checked)}
+                      />
+                      <div className={`block w-8 h-5 rounded-full transition-colors ${isGridEnabled ? 'bg-blue-600' : 'bg-gray-300'}`}></div>
+                      <div className={`absolute left-1 top-1 bg-white w-3 h-3 rounded-full transition-transform ${isGridEnabled ? 'transform translate-x-3' : ''}`}></div>
+                    </div>
+                    <span className="text-sm font-medium text-gray-700 hidden sm:block">Attach to grid</span>
+                  </label>
+                  
+                  {isGridEnabled && (
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-gray-500">Fine</span>
+                      <input 
+                        type="range" 
+                        min="10" 
+                        max="100" 
+                        step="5"
+                        value={gridSize}
+                        onChange={(e) => setGridSize(Number(e.target.value))}
+                        className="w-24 h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                      />
+                      <span className="text-xs text-gray-500">Coarse</span>
+                    </div>
+                  )}
+                </div>
                 <label className="flex items-center gap-2 px-4 py-2 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 cursor-pointer transition-colors">
                   <Upload size={16} />
                   Upload Floorplan
