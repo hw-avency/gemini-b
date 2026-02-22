@@ -3,6 +3,7 @@ import { Resource, Booking } from '../types';
 import { calculateBookingPercentage, getResourceBookingsForDate, timeToMinutes } from '../utils';
 import { useAppContext } from '../AppContext';
 import { Monitor, Users } from 'lucide-react';
+import { tText } from '../i18n';
 
 type ResourceMarkerProps = {
   resource: Resource;
@@ -11,7 +12,7 @@ type ResourceMarkerProps = {
 };
 
 export const ResourceMarker: React.FC<ResourceMarkerProps> = ({ resource, date, onClick }) => {
-  const { bookings, users } = useAppContext();
+  const { bookings, users, language } = useAppContext();
   const dayBookings = getResourceBookingsForDate(bookings, resource.id, date);
 
   const WORK_DAY_START = 6 * 60;
@@ -95,7 +96,7 @@ export const ResourceMarker: React.FC<ResourceMarkerProps> = ({ resource, date, 
               src={activeUser.avatarUrl}
               alt={activeUser.name}
               className="w-6 h-6 rounded-full border-2 border-white shadow-sm"
-              title={`Booked by ${activeUser.name}`}
+              title={tText(language, 'bookedBy', { name: activeUser.name })}
             />
           </div>
         )}

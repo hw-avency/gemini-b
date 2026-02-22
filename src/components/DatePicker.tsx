@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { format, addMonths, subMonths, addDays, subDays, startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval, isSameMonth, isSameDay, parseISO } from 'date-fns';
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon } from 'lucide-react';
+import { useAppContext } from '../AppContext';
+import { dateLocales } from '../i18n';
 
 type DatePickerProps = {
   selectedDate: string;
@@ -8,6 +10,7 @@ type DatePickerProps = {
 };
 
 export const DatePicker: React.FC<DatePickerProps> = ({ selectedDate, onChange }) => {
+  const { language } = useAppContext();
   const [isOpen, setIsOpen] = useState(false);
   const [currentMonth, setCurrentMonth] = useState(parseISO(selectedDate));
   const popoverRef = useRef<HTMLDivElement>(null);
@@ -49,19 +52,15 @@ export const DatePicker: React.FC<DatePickerProps> = ({ selectedDate, onChange }
 
   const monthStart = startOfMonth(currentMonth);
   const monthEnd = endOfMonth(monthStart);
-  const startDate = startOfWeek(monthStart, { weekStartsOn: 1 }); // Start on Monday
+  const startDate = startOfWeek(monthStart, { weekStartsOn: 1 });
   const endDate = endOfWeek(monthEnd, { weekStartsOn: 1 });
 
-  const dateFormat = "MMMM yyyy";
   const days = eachDayOfInterval({ start: startDate, end: endDate });
-  const weekDays = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
+  const weekDays = language === 'de' ? ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'] : ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
 
   return (
     <div className="relative flex items-center gap-2" ref={popoverRef}>
-      <button 
-        onClick={handlePrev}
-        className="p-2 text-gray-500 hover:bg-gray-100 rounded-lg transition-colors"
-      >
+      <button onClick={handlePrev} className="p-2 text-gray-500 hover:bg-gray-100 rounded-lg transition-colors">
         <ChevronLeft size={20} />
       </button>
 
@@ -74,7 +73,9 @@ export const DatePicker: React.FC<DatePickerProps> = ({ selectedDate, onChange }
         >
           <CalendarIcon className="text-gray-500" size={18} />
           <span className="text-sm font-medium text-gray-800">
-            {isOpen ? format(currentMonth, dateFormat) : format(parseISO(selectedDate), 'EEEE, MMM d, yyyy')}
+            {isOpen
+              ? format(currentMonth, 'MMMM yyyy', { locale: dateLocales[language] })
+              : format(parseISO(selectedDate), 'EEEE, MMM d, yyyy', { locale: dateLocales[language] })}
           </span>
         </button>
 
@@ -114,10 +115,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({ selectedDate, onChange }
         )}
       </div>
 
-      <button 
-        onClick={handleNext}
-        className="p-2 text-gray-500 hover:bg-gray-100 rounded-lg transition-colors"
-      >
+      <button onClick={handleNext} className="p-2 text-gray-500 hover:bg-gray-100 rounded-lg transition-colors">
         <ChevronRight size={20} />
       </button>
     </div>

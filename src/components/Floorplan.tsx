@@ -3,7 +3,7 @@ import { useAppContext } from '../AppContext';
 import { ResourceMarker } from './ResourceMarker';
 import { ResourceConfigModal } from './ResourceConfigModal';
 import { Resource } from '../types';
-import { format } from 'date-fns';
+import { tText } from '../i18n';
 
 type FloorplanProps = {
   selectedDate: string;
@@ -11,7 +11,7 @@ type FloorplanProps = {
 };
 
 export const Floorplan: React.FC<FloorplanProps> = ({ selectedDate, onResourceClick }) => {
-  const { resources, isAdmin, addResource, floors, selectedFloorId, isGridEnabled, gridSize } = useAppContext();
+  const { resources, floors, selectedFloorId, isAdmin, isGridEnabled, gridSize, language } = useAppContext();
   const [newResourcePos, setNewResourcePos] = useState<{ x: number, y: number } | null>(null);
 
   const currentFloor = floors.find(f => f.id === selectedFloorId);
@@ -80,9 +80,9 @@ export const Floorplan: React.FC<FloorplanProps> = ({ selectedDate, onResourceCl
               <path d="M 600 225 L 750 225" stroke="currentColor" strokeWidth="4" />
               
               {/* Labels */}
-              <text x="225" y="125" fill="#9ca3af" fontSize="24" fontFamily="sans-serif" textAnchor="middle">Open Space</text>
-              <text x="675" y="137.5" fill="#9ca3af" fontSize="20" fontFamily="sans-serif" textAnchor="middle">Meeting A</text>
-              <text x="675" y="312.5" fill="#9ca3af" fontSize="20" fontFamily="sans-serif" textAnchor="middle">Meeting B</text>
+              <text x="225" y="125" fill="#9ca3af" fontSize="24" fontFamily="sans-serif" textAnchor="middle">{tText(language, 'openSpace')}</text>
+              <text x="675" y="137.5" fill="#9ca3af" fontSize="20" fontFamily="sans-serif" textAnchor="middle">{tText(language, 'meetingA')}</text>
+              <text x="675" y="312.5" fill="#9ca3af" fontSize="20" fontFamily="sans-serif" textAnchor="middle">{tText(language, 'meetingB')}</text>
             </>
           ) : (
             <>
@@ -91,10 +91,10 @@ export const Floorplan: React.FC<FloorplanProps> = ({ selectedDate, onResourceCl
               <path d="M 600 225 L 600 400" stroke="currentColor" strokeWidth="4" />
               
               {/* Labels */}
-              <text x="225" y="137.5" fill="#9ca3af" fontSize="24" fontFamily="sans-serif" textAnchor="middle">Quiet Zone</text>
-              <text x="575" y="137.5" fill="#9ca3af" fontSize="20" fontFamily="sans-serif" textAnchor="middle">Lounge</text>
-              <text x="325" y="312.5" fill="#9ca3af" fontSize="24" fontFamily="sans-serif" textAnchor="middle">Open Space 2</text>
-              <text x="675" y="312.5" fill="#9ca3af" fontSize="20" fontFamily="sans-serif" textAnchor="middle">Meeting C</text>
+              <text x="225" y="137.5" fill="#9ca3af" fontSize="24" fontFamily="sans-serif" textAnchor="middle">{tText(language, 'quietZone')}</text>
+              <text x="575" y="137.5" fill="#9ca3af" fontSize="20" fontFamily="sans-serif" textAnchor="middle">{tText(language, 'lounge')}</text>
+              <text x="325" y="312.5" fill="#9ca3af" fontSize="24" fontFamily="sans-serif" textAnchor="middle">{tText(language, 'openSpace2')}</text>
+              <text x="675" y="312.5" fill="#9ca3af" fontSize="20" fontFamily="sans-serif" textAnchor="middle">{tText(language, 'meetingC')}</text>
             </>
           )}
         </svg>

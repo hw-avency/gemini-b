@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { User, Resource, Booking, Floor } from './types';
 import { USERS, CURRENT_USER, INITIAL_RESOURCES, INITIAL_BOOKINGS, INITIAL_FLOORS } from './data';
+import { Language } from './i18n';
 
 type AppContextType = {
   users: User[];
@@ -16,6 +17,8 @@ type AppContextType = {
   setIsGridEnabled: (val: boolean) => void;
   gridSize: number;
   setGridSize: (val: number) => void;
+  language: Language;
+  setLanguage: (language: Language) => void;
   defaultResourceSettings: Record<string, Partial<Resource>>;
   setDefaultResourceSettings: (settings: Record<string, Partial<Resource>>) => void;
   addResource: (resource: Resource) => void;
@@ -34,6 +37,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [isGridEnabled, setIsGridEnabled] = useState(false);
   const [gridSize, setGridSize] = useState(5);
   const [defaultResourceSettings, setDefaultResourceSettings] = useState<Record<string, Partial<Resource>>>({});
+  const [language, setLanguage] = useState<Language>('de');
   const [resources, setResources] = useState<Resource[]>(INITIAL_RESOURCES);
   const [bookings, setBookings] = useState<Booking[]>(INITIAL_BOOKINGS);
   const [floors, setFloors] = useState<Floor[]>(INITIAL_FLOORS);
@@ -67,6 +71,8 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       setIsGridEnabled,
       gridSize,
       setGridSize,
+      language,
+      setLanguage,
       defaultResourceSettings,
       setDefaultResourceSettings,
       addResource,

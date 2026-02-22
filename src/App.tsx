@@ -8,9 +8,10 @@ import { DatePicker } from './components/DatePicker';
 import { Resource, Booking } from './types';
 import { Calendar, Map, List, Settings, Upload, User as UserIcon, Users, ChevronLeft, ChevronRight } from 'lucide-react';
 import { format, addDays, subDays, parseISO } from 'date-fns';
+import { tText } from './i18n';
 
 const MainApp = () => {
-  const { currentUser, isAdmin, setIsAdmin, bookings, floors, selectedFloorId, setSelectedFloorId, updateFloor, isGridEnabled, setIsGridEnabled, gridSize, setGridSize } = useAppContext();
+  const { currentUser, isAdmin, setIsAdmin, bookings, floors, selectedFloorId, setSelectedFloorId, updateFloor, isGridEnabled, setIsGridEnabled, gridSize, setGridSize, language, setLanguage } = useAppContext();
   const [view, setView] = useState<'map' | 'list' | 'attendance'>('map');
   const [selectedDate, setSelectedDate] = useState(format(new Date(), 'yyyy-MM-dd'));
   const [showAllDates, setShowAllDates] = useState(false);
@@ -70,7 +71,7 @@ const MainApp = () => {
                 }`}
               >
                 <Map size={16} />
-                Floorplan
+                {tText(language, 'floorplan')}
               </button>
               <button
                 onClick={() => setView('list')}
@@ -79,7 +80,7 @@ const MainApp = () => {
                 }`}
               >
                 <List size={16} />
-                My Bookings
+                {tText(language, 'myBookings')}
               </button>
               <button
                 onClick={() => setView('attendance')}
@@ -88,9 +89,26 @@ const MainApp = () => {
                 }`}
               >
                 <Users size={16} />
-                Attendance
+                {tText(language, 'attendance')}
               </button>
             </nav>
+
+            <div className="flex items-center gap-1 bg-gray-100 p-1 rounded-lg" aria-label="Language switcher">
+              <button
+                onClick={() => setLanguage('en')}
+                className={`text-sm px-2 py-1 rounded-md ${language === 'en' ? 'bg-white shadow-sm' : 'opacity-70 hover:opacity-100'}`}
+                title="English"
+              >
+                🇬🇧
+              </button>
+              <button
+                onClick={() => setLanguage('de')}
+                className={`text-sm px-2 py-1 rounded-md ${language === 'de' ? 'bg-white shadow-sm' : 'opacity-70 hover:opacity-100'}`}
+                title="Deutsch"
+              >
+                🇩🇪
+              </button>
+            </div>
 
             {/* Admin Toggle & User Profile */}
             <div className="flex items-center gap-4 pl-6 border-l border-gray-200">
@@ -106,7 +124,7 @@ const MainApp = () => {
                   <div className={`absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform ${isAdmin ? 'transform translate-x-4' : ''}`}></div>
                 </div>
                 <span className="text-sm font-medium text-gray-600 group-hover:text-gray-900 transition-colors hidden sm:block">
-                  Admin Mode
+                  {tText(language, 'adminMode')}
                 </span>
               </label>
 
@@ -129,7 +147,7 @@ const MainApp = () => {
                       className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
                     >
                       <Settings size={16} />
-                      Preferences
+                      {tText(language, 'preferences')}
                     </button>
                     <div className="h-px bg-gray-100 my-1"></div>
                     <button 
@@ -140,7 +158,7 @@ const MainApp = () => {
                       className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
                     >
                       <UserIcon size={16} />
-                      Logout
+                      {tText(language, 'logout')}
                     </button>
                   </div>
                 )}
@@ -171,7 +189,7 @@ const MainApp = () => {
                 >
                   {floors.map(floor => (
                     <option key={floor.id} value={floor.id}>
-                      {floor.name}
+                      {floor.id === 'f1' ? tText(language, 'floor1') : floor.id === 'f2' ? tText(language, 'floor2') : floor.name}
                     </option>
                   ))}
                 </select>
@@ -184,7 +202,7 @@ const MainApp = () => {
                     showAllDates ? 'bg-blue-100 text-blue-700 font-medium' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                   }`}
                 >
-                  {showAllDates ? 'Showing All' : 'View All'}
+                  {showAllDates ? tText(language, 'showingAll') : tText(language, 'viewAll')}
                 </button>
               )}
             </div>
@@ -203,12 +221,12 @@ const MainApp = () => {
                       <div className={`block w-8 h-5 rounded-full transition-colors ${isGridEnabled ? 'bg-blue-600' : 'bg-gray-300'}`}></div>
                       <div className={`absolute left-1 top-1 bg-white w-3 h-3 rounded-full transition-transform ${isGridEnabled ? 'transform translate-x-3' : ''}`}></div>
                     </div>
-                    <span className="text-sm font-medium text-gray-700 hidden sm:block">Attach to grid</span>
+                    <span className="text-sm font-medium text-gray-700 hidden sm:block">{tText(language, 'attachToGrid')}</span>
                   </label>
                   
                   {isGridEnabled && (
                     <div className="flex items-center gap-2">
-                      <span className="text-xs text-gray-500">Fine</span>
+                      <span className="text-xs text-gray-500">{tText(language, 'fine')}</span>
                       <input 
                         type="range" 
                         min="10" 
@@ -218,17 +236,17 @@ const MainApp = () => {
                         onChange={(e) => setGridSize(Number(e.target.value))}
                         className="w-24 h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer"
                       />
-                      <span className="text-xs text-gray-500">Coarse</span>
+                      <span className="text-xs text-gray-500">{tText(language, 'coarse')}</span>
                     </div>
                   )}
                 </div>
                 <label className="flex items-center gap-2 px-4 py-2 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 cursor-pointer transition-colors">
                   <Upload size={16} />
-                  Upload Floorplan
+                  {tText(language, 'uploadFloorplan')}
                   <input type="file" accept="image/*,.svg" className="hidden" onChange={handleFileUpload} />
                 </label>
                 <div className="text-xs text-gray-500 hidden md:block">
-                  Click map to add resources
+                  {tText(language, 'clickMapToAddResources')}
                 </div>
               </div>
             )}
