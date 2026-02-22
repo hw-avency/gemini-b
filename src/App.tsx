@@ -5,18 +5,31 @@ import { BookingModal } from './components/BookingModal';
 import { MyBookings } from './components/MyBookings';
 import { AttendanceList } from './components/AttendanceList';
 import { Resource, Booking } from './types';
-import { Calendar, Map, List, Settings, Upload, User as UserIcon, Users } from 'lucide-react';
-import { format } from 'date-fns';
+import { Calendar, Map, List, Settings, Upload, User as UserIcon, Users, ChevronLeft, ChevronRight } from 'lucide-react';
+import { format, addDays, subDays, parseISO } from 'date-fns';
 
 const MainApp = () => {
   const { currentUser, isAdmin, setIsAdmin, setFloorplanUrl, bookings } = useAppContext();
   const [view, setView] = useState<'map' | 'list' | 'attendance'>('map');
   const [selectedDate, setSelectedDate] = useState(format(new Date(), 'yyyy-MM-dd'));
+  const [showAllDates, setShowAllDates] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   
   // Modal State
   const [selectedResource, setSelectedResource] = useState<Resource | null>(null);
   const [editingBooking, setEditingBooking] = useState<Booking | undefined>(undefined);
+
+  const handlePrevDay = () => {
+    const prevDate = subDays(parseISO(selectedDate), 1);
+    setSelectedDate(format(prevDate, 'yyyy-MM-dd'));
+    if (view === 'list') setShowAllDates(false);
+  };
+
+  const handleNextDay = () => {
+    const nextDate = addDays(parseISO(selectedDate), 1);
+    setSelectedDate(format(nextDate, 'yyyy-MM-dd'));
+    if (view === 'list') setShowAllDates(false);
+  };
 
   const handleResourceClick = (resource: Resource) => {
     const userBooking = bookings.find(b => b.resourceId === resource.id && b.date === selectedDate && b.userId === currentUser.id);
@@ -148,37 +161,70 @@ const MainApp = () => {
       {/* Main Content */}
       <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
         <div className="space-y-6">
-          {(view === 'map' || view === 'attendance') && (
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
-              <div className="flex items-center gap-3">
-                <Calendar className="text-gray-400" size={20} />
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+            <div className="flex items-center gap-2">
+              <button 
+                onClick={handlePrevDay}
+                className="p-2 text-gray-500 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <ChevronLeft size={20} />
+              </button>
+              
+              <div className="relative flex items-center gap-2 px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl">
+                <Calendar className="text-gray-500" size={18} />
+                <span className="text-sm font-medium text-gray-800">
+                  {format(parseISO(selectedDate), 'EEEE, MMM d, yyyy')}
+                </span>
                 <input
                   type="date"
                   value={selectedDate}
-                  onChange={(e) => setSelectedDate(e.target.value)}
-                  className="text-lg font-medium text-gray-800 bg-transparent border-none focus:ring-0 p-0 cursor-pointer"
+                  onChange={(e) => {
+                    setSelectedDate(e.target.value);
+                    if (view === 'list' && e.target.value) {
+                      setShowAllDates(false);
+                    }
+                  }}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                 />
               </div>
 
-              {isAdmin && view === 'map' && (
-                <div className="flex items-center gap-3">
-                  <label className="flex items-center gap-2 px-4 py-2 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 cursor-pointer transition-colors">
-                    <Upload size={16} />
-                    Upload Floorplan
-                    <input type="file" accept="image/*,.svg" className="hidden" onChange={handleFileUpload} />
-                  </label>
-                  <div className="text-xs text-gray-500 hidden sm:block">
-                    Click map to add resources
-                  </div>
-                </div>
+              <button 
+                onClick={handleNextDay}
+                className="p-2 text-gray-500 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <ChevronRight size={20} />
+              </button>
+
+              {view === 'list' && (
+                <button
+                  onClick={() => setShowAllDates(!showAllDates)}
+                  className={`ml-2 px-3 py-1.5 text-sm rounded-lg transition-colors ${
+                    showAllDates ? 'bg-blue-100 text-blue-700 font-medium' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                >
+                  {showAllDates ? 'Showing All' : 'View All'}
+                </button>
               )}
             </div>
-          )}
+
+            {isAdmin && view === 'map' && (
+              <div className="flex items-center gap-3">
+                <label className="flex items-center gap-2 px-4 py-2 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 cursor-pointer transition-colors">
+                  <Upload size={16} />
+                  Upload Floorplan
+                  <input type="file" accept="image/*,.svg" className="hidden" onChange={handleFileUpload} />
+                </label>
+                <div className="text-xs text-gray-500 hidden sm:block">
+                  Click map to add resources
+                </div>
+              </div>
+            )}
+          </div>
 
           {view === 'map' ? (
             <Floorplan selectedDate={selectedDate} onResourceClick={handleResourceClick} />
           ) : view === 'list' ? (
-            <MyBookings onEditBooking={handleEditBooking} />
+            <MyBookings onEditBooking={handleEditBooking} selectedDate={selectedDate} showAllDates={showAllDates} />
           ) : (
             <AttendanceList selectedDate={selectedDate} />
           )}

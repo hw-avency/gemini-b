@@ -42,10 +42,15 @@ export const Floorplan: React.FC<FloorplanProps> = ({ selectedDate, onResourceCl
     <div className="relative w-full max-w-4xl mx-auto aspect-video bg-gray-50 border border-gray-200 rounded-xl overflow-hidden shadow-sm">
       {/* Background SVG or Image */}
       {floorplanUrl ? (
-        <img src={floorplanUrl} alt="Floorplan" className="w-full h-full object-cover" onClick={handleMapClick} />
+        <img 
+          src={floorplanUrl} 
+          alt="Floorplan" 
+          className={`w-full h-full object-cover ${isAdmin ? 'cursor-crosshair' : ''}`} 
+          onClick={handleMapClick} 
+        />
       ) : (
         <svg
-          className="w-full h-full text-gray-300"
+          className={`w-full h-full text-gray-300 ${isAdmin ? 'cursor-crosshair' : ''}`}
           viewBox="0 0 800 450"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"

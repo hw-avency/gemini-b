@@ -6,14 +6,16 @@ import { Booking, Resource } from '../types';
 
 type MyBookingsProps = {
   onEditBooking: (booking: Booking, resource: Resource) => void;
+  selectedDate: string;
+  showAllDates: boolean;
 };
 
-export const MyBookings: React.FC<MyBookingsProps> = ({ onEditBooking }) => {
+export const MyBookings: React.FC<MyBookingsProps> = ({ onEditBooking, selectedDate, showAllDates }) => {
   const { bookings, currentUser, resources, deleteBooking } = useAppContext();
   const [confirmingDeleteId, setConfirmingDeleteId] = React.useState<string | null>(null);
 
   const userBookings = bookings
-    .filter((b) => b.userId === currentUser.id)
+    .filter((b) => b.userId === currentUser.id && (showAllDates || b.date === selectedDate))
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
   if (userBookings.length === 0) {
@@ -28,7 +30,12 @@ export const MyBookings: React.FC<MyBookingsProps> = ({ onEditBooking }) => {
 
   return (
     <div className="max-w-4xl mx-auto w-full">
-      <h2 className="text-2xl font-semibold text-gray-800 mb-6">My Bookings</h2>
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-2xl font-semibold text-gray-800">My Bookings</h2>
+        <span className="bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full">
+          {userBookings.length} {userBookings.length === 1 ? 'Booking' : 'Bookings'}
+        </span>
+      </div>
       <div className="grid gap-4 md:grid-cols-2">
         {userBookings.map((booking) => {
           const resource = resources.find((r) => r.id === booking.resourceId);
