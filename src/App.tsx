@@ -58,7 +58,7 @@ const MainApp = () => {
             <div className="bg-blue-600 p-2 rounded-lg">
               <Map className="text-white" size={24} />
             </div>
-            <h1 className="text-xl font-bold tracking-tight text-gray-900">SpaceBook</h1>
+            <h1 className="text-xl font-bold tracking-tight text-gray-900">G-Booking</h1>
           </div>
 
           <div className="flex items-center gap-6">
@@ -96,17 +96,19 @@ const MainApp = () => {
             <div className="flex items-center gap-1 bg-gray-100 p-1 rounded-lg" aria-label="Language switcher">
               <button
                 onClick={() => setLanguage('en')}
-                className={`text-sm px-2 py-1 rounded-md ${language === 'en' ? 'bg-white shadow-sm' : 'opacity-70 hover:opacity-100'}`}
+                className={`h-8 w-8 flex items-center justify-center rounded-md transition-all ${language === 'en' ? 'bg-white shadow-sm scale-105' : 'opacity-70 hover:opacity-100 hover:scale-105'}`}
                 title="English"
+                aria-label="Switch language to English"
               >
-                🇬🇧
+                <span className="text-lg" role="img" aria-hidden="true">🇬🇧</span>
               </button>
               <button
                 onClick={() => setLanguage('de')}
-                className={`text-sm px-2 py-1 rounded-md ${language === 'de' ? 'bg-white shadow-sm' : 'opacity-70 hover:opacity-100'}`}
+                className={`h-8 w-8 flex items-center justify-center rounded-md transition-all ${language === 'de' ? 'bg-white shadow-sm scale-105' : 'opacity-70 hover:opacity-100 hover:scale-105'}`}
                 title="Deutsch"
+                aria-label="Sprache auf Deutsch umstellen"
               >
-                🇩🇪
+                <span className="text-lg" role="img" aria-hidden="true">🇩🇪</span>
               </button>
             </div>
 

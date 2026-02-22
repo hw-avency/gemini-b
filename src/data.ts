@@ -16,16 +16,16 @@ export const INITIAL_FLOORS: Floor[] = [
 ];
 
 export const INITIAL_RESOURCES: Resource[] = [
-  { id: 'r1', name: 'Desk 1', type: 'desk', x: 20, y: 30, floorId: 'f1' },
-  { id: 'r2', name: 'Desk 2', type: 'desk', x: 30, y: 30, floorId: 'f1' },
-  { id: 'r3', name: 'Desk 3', type: 'desk', x: 40, y: 30, floorId: 'f1' },
-  { id: 'r4', name: 'Desk 4', type: 'desk', x: 20, y: 50, floorId: 'f1' },
-  { id: 'r5', name: 'Desk 5', type: 'desk', x: 30, y: 50, floorId: 'f1' },
-  { id: 'r6', name: 'Room A', type: 'room', x: 70, y: 25, floorId: 'f1' },
-  { id: 'r7', name: 'Room B', type: 'room', x: 70, y: 65, floorId: 'f1' },
-  { id: 'r8', name: 'Desk 6', type: 'desk', x: 20, y: 30, floorId: 'f2' },
-  { id: 'r9', name: 'Desk 7', type: 'desk', x: 30, y: 30, floorId: 'f2' },
-  { id: 'r10', name: 'Room C', type: 'room', x: 70, y: 45, floorId: 'f2' },
+  { id: 'r1', name: 'Desk 1', type: 'desk', x: 18, y: 26, floorId: 'f1' },
+  { id: 'r2', name: 'Desk 2', type: 'desk', x: 28, y: 26, floorId: 'f1' },
+  { id: 'r3', name: 'Desk 3', type: 'desk', x: 38, y: 26, floorId: 'f1' },
+  { id: 'r4', name: 'Desk 4', type: 'desk', x: 18, y: 42, floorId: 'f1' },
+  { id: 'r5', name: 'Desk 5', type: 'desk', x: 28, y: 42, floorId: 'f1' },
+  { id: 'r6', name: 'Room A', type: 'room', x: 72, y: 24, floorId: 'f1' },
+  { id: 'r7', name: 'Room B', type: 'room', x: 72, y: 62, floorId: 'f1' },
+  { id: 'r8', name: 'Desk 6', type: 'desk', x: 24, y: 28, floorId: 'f2' },
+  { id: 'r9', name: 'Desk 7', type: 'desk', x: 24, y: 44, floorId: 'f2' },
+  { id: 'r10', name: 'Room C', type: 'room', x: 68, y: 36, floorId: 'f2' },
 ];
 
 const today = format(new Date(), 'yyyy-MM-dd');
