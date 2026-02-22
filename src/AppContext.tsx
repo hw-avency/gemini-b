@@ -1,31 +1,37 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { User, Resource, Booking } from './types';
-import { USERS, CURRENT_USER, INITIAL_RESOURCES, INITIAL_BOOKINGS } from './data';
+import { User, Resource, Booking, Floor } from './types';
+import { USERS, CURRENT_USER, INITIAL_RESOURCES, INITIAL_BOOKINGS, INITIAL_FLOORS } from './data';
 
 type AppContextType = {
   users: User[];
   currentUser: User;
   resources: Resource[];
   bookings: Booking[];
+  floors: Floor[];
+  selectedFloorId: string;
+  setSelectedFloorId: (id: string) => void;
   isAdmin: boolean;
   setIsAdmin: (val: boolean) => void;
+  isGridEnabled: boolean;
+  setIsGridEnabled: (val: boolean) => void;
   addResource: (resource: Resource) => void;
   updateResource: (resource: Resource) => void;
   deleteResource: (id: string) => void;
   addBooking: (booking: Booking) => void;
   updateBooking: (booking: Booking) => void;
   deleteBooking: (id: string) => void;
-  floorplanUrl: string | null;
-  setFloorplanUrl: (url: string | null) => void;
+  updateFloor: (floor: Floor) => void;
 };
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isGridEnabled, setIsGridEnabled] = useState(false);
   const [resources, setResources] = useState<Resource[]>(INITIAL_RESOURCES);
   const [bookings, setBookings] = useState<Booking[]>(INITIAL_BOOKINGS);
-  const [floorplanUrl, setFloorplanUrl] = useState<string | null>(null);
+  const [floors, setFloors] = useState<Floor[]>(INITIAL_FLOORS);
+  const [selectedFloorId, setSelectedFloorId] = useState<string>(INITIAL_FLOORS[0].id);
 
   const addResource = (resource: Resource) => setResources([...resources, resource]);
   const updateResource = (updated: Resource) => setResources(resources.map(r => r.id === updated.id ? updated : r));
@@ -38,22 +44,28 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const updateBooking = (updated: Booking) => setBookings(bookings.map(b => b.id === updated.id ? updated : b));
   const deleteBooking = (id: string) => setBookings(bookings.filter(b => b.id !== id));
 
+  const updateFloor = (updated: Floor) => setFloors(floors.map(f => f.id === updated.id ? updated : f));
+
   return (
     <AppContext.Provider value={{
       users: USERS,
       currentUser: CURRENT_USER,
       resources,
       bookings,
+      floors,
+      selectedFloorId,
+      setSelectedFloorId,
       isAdmin,
       setIsAdmin,
+      isGridEnabled,
+      setIsGridEnabled,
       addResource,
       updateResource,
       deleteResource,
       addBooking,
       updateBooking,
       deleteBooking,
-      floorplanUrl,
-      setFloorplanUrl
+      updateFloor
     }}>
       {children}
     </AppContext.Provider>

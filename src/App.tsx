@@ -10,7 +10,7 @@ import { Calendar, Map, List, Settings, Upload, User as UserIcon, Users, Chevron
 import { format, addDays, subDays, parseISO } from 'date-fns';
 
 const MainApp = () => {
-  const { currentUser, isAdmin, setIsAdmin, setFloorplanUrl, bookings } = useAppContext();
+  const { currentUser, isAdmin, setIsAdmin, bookings, floors, selectedFloorId, setSelectedFloorId, updateFloor, isGridEnabled, setIsGridEnabled } = useAppContext();
   const [view, setView] = useState<'map' | 'list' | 'attendance'>('map');
   const [selectedDate, setSelectedDate] = useState(format(new Date(), 'yyyy-MM-dd'));
   const [showAllDates, setShowAllDates] = useState(false);
@@ -41,7 +41,10 @@ const MainApp = () => {
     const file = e.target.files?.[0];
     if (file) {
       const url = URL.createObjectURL(file);
-      setFloorplanUrl(url);
+      const currentFloor = floors.find(f => f.id === selectedFloorId);
+      if (currentFloor) {
+        updateFloor({ ...currentFloor, floorplanUrl: url });
+      }
     }
   };
 
@@ -160,6 +163,20 @@ const MainApp = () => {
                 }} 
               />
 
+              {view === 'map' && (
+                <select
+                  value={selectedFloorId}
+                  onChange={(e) => setSelectedFloorId(e.target.value)}
+                  className="px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-medium text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  {floors.map(floor => (
+                    <option key={floor.id} value={floor.id}>
+                      {floor.name}
+                    </option>
+                  ))}
+                </select>
+              )}
+
               {view === 'list' && (
                 <button
                   onClick={() => setShowAllDates(!showAllDates)}
@@ -174,12 +191,25 @@ const MainApp = () => {
 
             {isAdmin && view === 'map' && (
               <div className="flex items-center gap-3">
+                <label className="flex items-center gap-2 cursor-pointer mr-2">
+                  <div className="relative flex items-center">
+                    <input
+                      type="checkbox"
+                      className="sr-only"
+                      checked={isGridEnabled}
+                      onChange={(e) => setIsGridEnabled(e.target.checked)}
+                    />
+                    <div className={`block w-8 h-5 rounded-full transition-colors ${isGridEnabled ? 'bg-blue-600' : 'bg-gray-300'}`}></div>
+                    <div className={`absolute left-1 top-1 bg-white w-3 h-3 rounded-full transition-transform ${isGridEnabled ? 'transform translate-x-3' : ''}`}></div>
+                  </div>
+                  <span className="text-sm font-medium text-gray-700 hidden sm:block">Attach to grid</span>
+                </label>
                 <label className="flex items-center gap-2 px-4 py-2 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 cursor-pointer transition-colors">
                   <Upload size={16} />
                   Upload Floorplan
                   <input type="file" accept="image/*,.svg" className="hidden" onChange={handleFileUpload} />
                 </label>
-                <div className="text-xs text-gray-500 hidden sm:block">
+                <div className="text-xs text-gray-500 hidden md:block">
                   Click map to add resources
                 </div>
               </div>

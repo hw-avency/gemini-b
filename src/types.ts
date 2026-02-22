@@ -4,6 +4,12 @@ export type User = {
   avatarUrl: string;
 };
 
+export type Floor = {
+  id: string;
+  name: string;
+  floorplanUrl: string | null;
+};
+
 export type ResourceType = 'desk' | 'room';
 
 export type Resource = {
@@ -12,6 +18,7 @@ export type Resource = {
   type: ResourceType;
   x: number; // percentage 0-100
   y: number; // percentage 0-100
+  floorId: string;
 };
 
 export type Booking = {
