@@ -1,23 +1,12 @@
-# Build stage
-FROM node:20-alpine AS builder
+FROM node:20-bookworm-slim
 WORKDIR /app
+ENV NODE_ENV=production
 
 COPY package*.json ./
 RUN npm ci
 
 COPY . .
-RUN npm run build
-
-# Runtime stage
-FROM node:20-alpine
-WORKDIR /app
-ENV NODE_ENV=production
-
-COPY package*.json ./
-RUN npm ci --omit=dev && npm cache clean --force
-
-COPY cloud-run-server.mjs ./
-COPY --from=builder /app/dist ./dist
+RUN npm run build && npm prune --omit=dev && npm cache clean --force
 
 EXPOSE 8080
 CMD ["node", "cloud-run-server.mjs"]
